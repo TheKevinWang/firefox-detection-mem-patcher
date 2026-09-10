@@ -1,4 +1,4 @@
-# Firefox Detection Mem Patcher
+# Firefox Detection Mem Patcher POC
 
 This Windows x64 proof of concept applies small, exact-build patches to Firefox process memory. It currently demonstrates two changes commonly studied in browser-automation detection research:
 
