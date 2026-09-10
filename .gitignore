@@ -1,0 +1,14 @@
+/build/
+/dist/
+/.vs/
+/.agent/
+/AGENTS.md
+/docs/execplans/
+**/__pycache__/
+*.dmp
+*.exe
+*.ilk
+*.obj
+*.pdb
+*.pyc
+*.user

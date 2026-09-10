@@ -1,0 +1,52 @@
+<!-- This Source Code Form is subject to the terms of the Mozilla Public
+     License, v. 2.0. If a copy of the MPL was not distributed with this
+     file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+<!doctype html>
+<meta charset="utf-8">
+<title>Firefox live-patch validation</title>
+<style>
+  body { font: 16px system-ui; margin: 2rem; }
+  dt { font-weight: 600; }
+  dd { margin: 0 0 0.75rem; }
+</style>
+<h1>Firefox live-patch validation</h1>
+<dl id="results"></dl>
+<script>
+  const values = {
+    webdriver: navigator.webdriver,
+    pointerFine: matchMedia("(pointer: fine)").matches,
+    pointerCoarse: matchMedia("(pointer: coarse)").matches,
+    hover: matchMedia("(hover: hover)").matches,
+    anyPointerFine: matchMedia("(any-pointer: fine)").matches,
+    anyPointerCoarse: matchMedia("(any-pointer: coarse)").matches,
+    anyHover: matchMedia("(any-hover: hover)").matches,
+  };
+  document.querySelector("#results").replaceChildren(
+    ...Object.entries(values).flatMap(([name, value]) => {
+      const term = document.createElement("dt");
+      const description = document.createElement("dd");
+      term.textContent = name;
+      description.textContent = JSON.stringify(value);
+      return [term, description];
+    }),
+  );
+  document.title = `livepatch:${JSON.stringify(values)}`;
+  fetch("/result", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify(values),
+  });
+  if (!location.search) {
+    setInterval(async () => {
+      const response = await fetch("/reload");
+      if (response.status === 200) location.replace("/?attached=1");
+    }, 100);
+  } else {
+    for (let address = 2; address < 16; address++) {
+      const frame = document.createElement("iframe");
+      frame.hidden = true;
+      frame.src = `http://127.0.0.${address}:${location.port}/empty`;
+      document.body.append(frame);
+    }
+  }
+</script>
